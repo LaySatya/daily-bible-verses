@@ -25,6 +25,8 @@ export default function LoginPage() {
         localStorage.setItem("userName", data.user.name);
       }
       setSuccess(data.message || "Login successful");
+      // refresh page 
+      window.location.reload();
     } catch (err) {
       setFieldErrors(err.details || {});
       setError(err.error || err.message || "Login failed");

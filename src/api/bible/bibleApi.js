@@ -12,17 +12,54 @@ export async function getBibleVerses() {
       'Authorization': `Bearer ${token}`,
     },
   });
-
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
     const data = await response.json();
     if (!response.ok) {
       throw data; // throw the whole error object
     }
     return data.data;
-  } else {
-    // Not JSON, probably HTML error page
-    const text = await response.text();
-    throw new Error("Server error: " + text.slice(0, 100));
+}
+
+export async function addBibleVerse(note) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/verse-notes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(note),
+  });
+  const data = await response.json();
+  if (!response.ok) throw data;
+  return data.data;
+}
+
+export async function editBibleVerse(id, note) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/verse-notes/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(note),
+  });
+  const data = await response.json();
+  if (!response.ok) throw data;
+  return data.data;
+}
+
+export async function deleteBibleVerse(id) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/verse-notes/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    const data = await response.json();
+    throw data;
   }
+  return true;
 }
